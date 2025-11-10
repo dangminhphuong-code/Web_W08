@@ -1,0 +1,29 @@
+<form action="" method="post">
+    <div class="card">
+        <h5 class="card-header">Edit category</h5>
+        <div class="card-body">
+            <div class="mb-3">
+                <label for="txtId" class="form-label">#</label>
+                <input type="text" class="form-control" id="txtId" name="id" value="{{category.id}}" readonly>
+            </div>
+            <div class="mb-3">
+                <label for="txtTitle" class="form-label">Category</label>
+                <input type="text" class="form-control" id="txtTitle" name="title" value="{{category.title}}" placeholder="Category Name">
+            </div>
+        </div>
+        <div class="card-footer text-muted">
+            <a href="/admin/categories" class="btn btn-outline-success" role="button">
+            <i class="bi bi-arrow-left"></i>
+            Back
+            </a>
+            <button type="submit" class="btn btn-danger" formaction="/admin/categories/del">
+                <i class="bi bi-trash"></i>
+                    Remove
+            </button>
+            <button type="submit" class="btn btn-primary" formaction="/admin/categories/patch">
+                <i class="bi bi-check2"></i>
+                    Save
+            </button>
+        </div>
+    </div>
+</form>
