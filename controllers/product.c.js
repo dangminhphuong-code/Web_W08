@@ -26,3 +26,24 @@ export const getProductById = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch product" });
   }
 };
+export const getProductsAjax = async (req, res) => {
+    try {
+        // 1. Lấy số trang từ body của request
+        // (Vì client-side của bạn dùng method: 'POST' và body: JSON.stringify({ page }))
+        const page = req.body.page || 1; 
+
+        // 2. Gọi hàm model đã sửa (ở đoạn chat trước)
+        // Hàm này sẽ trả về { products, page, totalPages }
+        const data = await productM.allWithPagination(page);
+
+        // 3. Trả về dữ liệu JSON cho client-side
+        res.json(data);
+
+    } catch (error) {
+        // 4. Đây là chìa khóa!!
+        // Nếu có lỗi 500, lỗi sẽ in ra ở Terminal của bạn
+        console.error("Lỗi 500 khi lấy AJAX:", error); 
+        
+        res.status(500).json({ error: "Failed to fetch paginated products" });
+    }
+};

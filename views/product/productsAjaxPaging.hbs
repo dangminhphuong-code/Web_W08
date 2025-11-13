@@ -1,0 +1,113 @@
+<div id="products" class="row row-cols-1 row-cols-md-3 g-4"></div>
+<nav class="mt-4">
+    <ul class="pagination justify-content-center"></ul>
+</nav>
+
+{{!-- Loading --}}
+<div id="page-loader" class="loader-container">
+    <div class="spinner"></div>
+</div>
+<div id="products" class="row row-cols-1 row-cols-md-3 g-4"></div>
+<nav class="mt-4">
+    <ul class="pagination justify-content-center"></ul>
+</nav>
+<script>
+    async function loadPage(page) {
+    // Lấy các phần tử DOM
+    const loader = document.getElementById('page-loader');
+    const productsContainer = document.getElementById('products');
+    const paginationContainer = document.querySelector('.pagination');
+
+    try {
+        // --- BẮT ĐẦU TẢI ---
+        loader.style.display = 'block'; // 1. Hiện spinner
+        productsContainer.classList.add('content-loading'); // 2. Làm mờ nội dung
+        paginationContainer.classList.add('content-loading');
+
+        const res = await fetch('/ajax', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ page })
+        });
+
+        if (!res.ok) {
+            // Xử lý lỗi nếu fetch thất bại
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+
+        const data = await res.json();
+
+        const productsHtml = data.products.map(createProductCard).join('');
+        productsContainer.innerHTML = productsHtml;
+        
+        createPagination(data.totalPages, data.page);
+
+    } catch (error) {
+        console.error('Lỗi khi tải trang:', error);
+        productsContainer.innerHTML = '<p class="text-danger text-center">Không thể tải sản phẩm. Vui lòng thử lại.</p>';
+    } finally {
+        // --- TẢI XONG (Luôn luôn chạy) ---
+        loader.style.display = 'none'; // 3. Ẩn spinner
+        productsContainer.classList.remove('content-loading'); // 4. Bỏ làm mờ
+        paginationContainer.classList.remove('content-loading');
+    }
+}
+
+    function createProductCard(product) {
+        return `
+            <div class="col">
+                <div class="card h-100 shadow">
+                    <div class="ratio ratio-1x1">
+                        <img src="/imgs/p${product.id}.png" class="img-card-top" alt="${product.name}">
+                    </div>
+                    <div class="card-body mt-2">
+                        <h4 class="card-title">${product.title}</h4>
+                        <p class="card-text text-truncate mt-3">${product.description}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function createPagination(totalPages, currentPage) {
+        const paginationContainer = document.querySelector('.pagination');
+        paginationContainer.innerHTML = '';
+
+        // Previous button
+        const prevClass = currentPage > 1 && totalPages > 1 ? 'page-item' : 'page-item disabled';
+        paginationContainer.innerHTML += `
+            <li class="${prevClass}">
+                <a class="page-link" href="#" onclick="loadPage(${currentPage - 1})" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+        `;
+
+        // Page numbers
+        for (let i = 1; i <= totalPages; i++) {
+            const pageClass = i === currentPage ? 'page-item active' : 'page-item';
+            paginationContainer.innerHTML += `
+                <li class="${pageClass}">
+                    <a class="page-link" href="#" onclick="loadPage(${i})">${i}</a>
+                </li>
+            `;
+        }
+
+        // Next button
+        const nextClass = currentPage < totalPages && totalPages > 1 ? 'page-item' : 'page-item disabled';
+        paginationContainer.innerHTML += `
+            <li class="${nextClass}">
+                <a class="page-link" href="#" onclick="loadPage(${currentPage + 1})" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        `;
+    }
+
+    // Load the first page on initial load
+    document.addEventListener('DOMContentLoaded', () => {
+        loadPage(1);
+    });
+</script>

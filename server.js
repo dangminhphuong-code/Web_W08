@@ -6,10 +6,30 @@ const port = 3000;
 
 //set up Handlebars view engine
 import {create} from 'express-handlebars';
-const hbs = create ({
+// Configure Handlebars
+const hbs = create({
     extname: '.hbs',
     layoutsDir: 'views/layouts/',
     defaultLayout: 'main',
+    helpers: {
+        // Helper to check if two values are equal
+        ifEquals: function (a, b, options) {
+            return a === b ? options.fn(this) : options.inverse(this);
+        },
+        // Helper to repeat a block n times for counting pages
+        pages: function (n, options) {
+            let accum = '';
+            for (let i = 1; i <= n; ++i) {
+                options.data.index = i;
+                options.data.first = i === 1;
+                options.data.last = i === n;
+                accum += options.fn(i);
+            }
+            return accum;
+        },
+        // Helper to add two numbers
+        sum: (a, b) => a + b
+    },
 });
 //configure Handlebars
 app.engine('.hbs', hbs.engine);
@@ -18,7 +38,7 @@ app.set('views', './views');
 
 //dùng lệnh req body
 app.use(express.urlencoded({extended: true}));
-
+app.use(express.json());
 //create __dirname variable
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -87,7 +107,7 @@ app.post('/admin/categories/patch',async function (req, res) {
     await db('categories').where('id',id).update(entity);
     res.redirect('/admin/categories')
 })
-app.use('/home', homeRouter);  
+app.use('/', homeRouter);  
 app.use('/categories', categoryRouter);
 app.use('/products', productRouter);
 

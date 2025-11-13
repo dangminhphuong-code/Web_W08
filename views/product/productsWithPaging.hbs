@@ -1,0 +1,50 @@
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    {{#each products}}
+    <div class="col">
+        <div class="card h-100 shadow">
+            <div class="ratio ratio-1x1">
+                <img src="/imgs/p{{this.id}}.png" class="img-card-top" alt="{{this.name}}">
+            </div>
+            <div class="card-body mt-2">
+                <h4 class="card-title">{{this.title}}</h4>
+                <p class="card-text text-truncate mt-3">{{this.description}}</p>
+            </div>
+            <div class="card-footer text-center">
+                <a class="btn btn-primary" href="/products/{{this.id}}">Xem chi tiết</a>
+            </div>
+        </div>
+    </div>
+    {{/each}}
+</div>
+
+<nav class="pagination-container mt-4">
+    <ul class="pagination justify-content-center">
+        {{#if enablePrev}}
+        <li class="page-item">
+        {{else}}
+        <li class="page-item disabled">
+        {{/if}}
+            <a class="page-link" href="/{{sum page -1}}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+
+        {{#pages totalPages}}
+            {{#ifEquals this ../page}}
+            <li class="page-item active"><a class="page-link" href="/{{this}}">{{this}}</a></li>
+            {{else}}
+            <li class="page-item"><a class="page-link" href="/{{this}}">{{this}}</a></li>
+            {{/ifEquals}}
+        {{/pages}}
+
+        {{#if enableNext}}
+        <li class="page-item">
+        {{else}}
+        <li class="page-item disabled">
+        {{/if}}
+            <a class="page-link" href="/{{sum page 1}}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    </ul>
+</nav>
