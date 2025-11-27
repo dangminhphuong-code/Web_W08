@@ -10,6 +10,7 @@ const pageSize = 3;
 export const getPaginatedProductsAndCategories = async(req, res)=>{
   const {page} = req.params;
   const {products, toal, safePage, safePageSize} = await productM.allWithPagination(page, pageSize);
+  const total = await productM.countAll();
   const totalPages = Math.ceil(total / safePageSize);
   const categories = await categoryM.all();
   res.render("product/productsWithPaging", {products, categories, totalPages, page: safePage, enablePrev: safePage > 1 && totalPages > 1, enableNext: safePage < totalPages && totalPages > 1});

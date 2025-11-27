@@ -29,4 +29,10 @@ export default {
 
             return {products, safePage, safePageSize, total: total.total};
     },
+
+    countAll: async () => {
+        // Đếm cột id (hoặc ProID) và đặt alias là 'total'
+        const result = await db(TABLE_NAME).count('* as total').first();
+        return result.total;
+    },
 }

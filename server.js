@@ -3,7 +3,7 @@ const app = express();
 
 const port = 3000;
 
-
+import userM from './models/user.m.js'; 
 //set up Handlebars view engine
 import {create} from 'express-handlebars';
 // Configure Handlebars
@@ -45,9 +45,41 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use('/imgs', express.static(__dirname + '/assets/imgs'));
-import homeRouter from './routers/home.r.js';
-import categoryRouter from './routers/category.r.js';
-import productRouter from './routers/product.r.js';
+
+// Import session
+import session from 'express-session';
+app.use(session({
+    secret: 'SECRET_KEY_CUA_BAN',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false } // Đặt secure: true nếu dùng HTTPS
+}));
+
+// 2. THÊM ĐOẠN MIDDLEWARE NÀY (Đặt ngay sau app.use(session...))
+app.use(async (req, res, next) => {
+    if (req.session.userId) {
+        // Nếu có userId trong session (đã đăng nhập)
+        try {
+            const user = await userM.oneById(req.session.userId);
+            if (user) {
+                // Tạo biến initials (VD: Nguyễn Văn A -> NVA) để hiện lên Avatar
+                const initials = user.name
+                    .split(' ')
+                    .map(n => n.charAt(0).toUpperCase())
+                    .join('');
+
+                // Gán user vào res.locals để mọi View (hbs) đều dùng được
+                res.locals.user = {
+                    ...user,
+                    initials: initials
+                };
+            }
+        } catch (error) {
+            console.error('Error loading user:', error);
+        }
+    }
+    next(); // Cho phép chạy tiếp sang các Router bên dưới
+});
 
 
 // ...existing code...
@@ -111,4 +143,9 @@ app.use('/', homeRouter);
 app.use('/categories', categoryRouter);
 app.use('/products', productRouter);
 
+import homeRouter from './routers/home.r.js';
+import categoryRouter from './routers/category.r.js';
+import productRouter from './routers/product.r.js';
+import authRouter from './routers/auth.r.js';
+app.use('/auth', authRouter);
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));

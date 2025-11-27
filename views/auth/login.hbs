@@ -1,0 +1,33 @@
+<div class="card shadow-sm" style="width: 400px; background-color: white;">
+    <div class="card-body p-4">
+        <h3 class="card-title text-center mb-4 fw-bold">Đăng nhập</h3>
+        
+        {{#if error}}
+        <div class="alert alert-danger">{{error}}</div>
+        {{/if}}
+
+        <form method="POST" action="/auth/login">
+            <div class="mb-3">
+                <label for="username" class="form-label">Tên đăng nhập</label>
+                <input type="text" class="form-control bg-light" id="username" name="username" placeholder="un01" value="{{username}}" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="password" class="form-label">Mật khẩu</label>
+                <input type="password" class="form-control bg-light" id="password" name="password" placeholder="..." required>
+            </div>
+
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                <label class="form-check-label" for="remember">Ghi nhớ đăng nhập</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mb-3 fw-bold">Đăng nhập</button>
+        </form>
+
+        <hr>
+        <p class="text-center mb-0">
+            Chưa có tài khoản? <a href="/auth/register" class="text-decoration-underline">Đăng ký ngay</a>
+        </p>
+    </div>
+</div>

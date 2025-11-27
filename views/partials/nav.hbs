@@ -1,10 +1,63 @@
-<nav class="navbar bg-info bg-gradient bg-opacity-25 flex-column align-items-start flex-sm-row p-3 rounded"><a href="/" class="navbar-brand">Home</a>
-<button class="navbar-toggler d-sm-none" type="button">
-    <span class="navbar-toggler-icon"></span>
-</button>
-<ul class="nav flex-column flex-sm-row">
-    <li class="nav-item"> <a class="nav-link" href="#">About</a></li>
-    <li class="nav-item"><a class="nav-link" href="#">Services</a></li>
-    <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
-</ul>
+<nav class="navbar navbar-expand-lg bg-light rounded shadow-sm p-3">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" href="/">Home</a>
+
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link text-primary" href="/categories">Categories
+            Management</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-primary" href="#">Services</a>
+        </li>
+      </ul>
+
+      <ul class="navbar-nav ms-auto">
+        {{#unless user}}
+          <li class="nav-item">
+            <a class="btn btn-outline-primary" href="/auth/login">Login</a>
+          </li>
+        {{/unless}}
+
+        {{#if user}}
+          <li class="nav-item dropdown">
+            <a
+              class="btn btn-info bg-opacity-25 dropdown-toggle d-flex align-items-center border-0"
+              href="#"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <span
+                class="badge rounded-circle d-flex justify-content-center align-items-center bg-warning text-dark me-2"
+                style="width: 30px; height: 30px; font-size: 14px;"
+              >
+                {{user.initials}}
+              </span>
+              <span class="fw-semibold">{{user.username}}</span>
+            </a>
+
+            <ul class="dropdown-menu dropdown-menu-end shadow">
+              <li>
+                <span class="dropdown-item-text fw-bold">{{user.name}}</span>
+              </li>
+              <li>
+                <span
+                  class="dropdown-item-text text-muted small"
+                >{{user.email}}</span>
+              </li>
+              <li><hr class="dropdown-divider" /></li>
+              <li>
+                <a
+                  class="dropdown-item text-danger"
+                  href="/auth/logout"
+                >Logout</a>
+              </li>
+            </ul>
+          </li>
+        {{/if}}
+      </ul>
+    </div>
+  </div>
 </nav>
